@@ -20,14 +20,7 @@ public class BreakfastBooking {
         roomNumber = 0;
         bookingDate = null;
     }
-    //Parameterized constructor
-    public BreakfastBooking(int numberOfPaxPerRoom, double overallTotalPrice, double totalPricePerDay, int roomNumber, LocalDate bookingDate) {
-        this.numberOfPaxPerRoom = numberOfPaxPerRoom;
-        this.overallTotalPrice = overallTotalPrice;
-        this.totalPricePerDay = totalPricePerDay;
-        this.roomNumber = roomNumber;
-        this.bookingDate = bookingDate;
-    }
+
     //Getter
     public int getNumberOfPaxPerRoom(){
         return numberOfPaxPerRoom;
@@ -60,7 +53,12 @@ public class BreakfastBooking {
     }
 
     public void promptBooking(){
-        System.out.println("-------------------"+"|BREAKFAST BOOKING|" + "-------------------");
+System.out.println("====================================");
+System.out.println("|                                  |");
+System.out.println("|        BREAKFAST BOOKING         |");
+System.out.println("|                                  |");
+System.out.println("====================================");
+
         Scanner sc = new Scanner(System.in);     
 
         System.out.print("Enter room number: ");
