@@ -1,50 +1,59 @@
 package Assignment;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Scanner;
 
 public class BreakfastBooking {
     private int numberOfPaxPerRoom;
-    public static int totalOverallPax = 0;
     public static final double BREAKFAST_PRICE = 35.0;
-    private double totalPricePerRoom;
-    public static double totalOverallPrice=0.0;
+    private double overallTotalPrice;
+    private double totalPricePerDay;
     private int roomNumber;
-    private LocalDateTime bookingDateTime;
+    private LocalDate bookingDate;
 
     //No arg constructor
     public BreakfastBooking(){
         numberOfPaxPerRoom = 0;
-        totalPricePerRoom = 0.0;
+        overallTotalPrice = 0.0;
+        totalPricePerDay = 0.0;
+
         roomNumber = 0;
-        bookingDateTime = null;
+        bookingDate = null;
     }
     //Parameterized constructor
-    public BreakfastBooking(int numberOfPaxPerRoom, double totalPricePerRoom, int roomNumber, LocalDateTime bookingDateTime) {
+    public BreakfastBooking(int numberOfPaxPerRoom, double overallTotalPrice, double totalPricePerDay, int roomNumber, LocalDate bookingDate) {
         this.numberOfPaxPerRoom = numberOfPaxPerRoom;
-        this.totalPricePerRoom = totalPricePerRoom;
+        this.overallTotalPrice = overallTotalPrice;
+        this.totalPricePerDay = totalPricePerDay;
         this.roomNumber = roomNumber;
-        this.bookingDateTime = bookingDateTime;
+        this.bookingDate = bookingDate;
     }
     //Getter
     public int getNumberOfPaxPerRoom(){
         return numberOfPaxPerRoom;
     }
-    public double getTotalPricePerRoom(){
-        return totalPricePerRoom;
+    public double getTotalPricePerDay(){
+        return totalPricePerDay;
+    }
+    public double getOverallTotalPrice(){
+        return overallTotalPrice;
     }
     public int getRoomNumber(){
         return roomNumber;
     }
-    public LocalDateTime getBookingDateTime(){
-        return bookingDateTime;
+    public LocalDate getBookingDate(){
+        return bookingDate;
     }
+
     //Setter
     public void setNumberOfPaxPerRoom(int numberOfPaxPerRoom){
         this.numberOfPaxPerRoom = numberOfPaxPerRoom;
     }
-    public void setTotalPricePerRoom(double totalPricePerRoom){
-        this.totalPricePerRoom = totalPricePerRoom;
+    public void setTotalPricePerDay(double totalPricePerDay){
+        this.totalPricePerDay = totalPricePerDay;
+    }
+    public void setOverallTotalPrice(double overallTotalPrice){
+        this.overallTotalPrice = overallTotalPrice;
     }
     public void setRoomNumber(int roomNumber){
         this.roomNumber = roomNumber;
@@ -54,19 +63,31 @@ public class BreakfastBooking {
         System.out.println("-------------------"+"|BREAKFAST BOOKING|" + "-------------------");
         Scanner sc = new Scanner(System.in);     
 
-        System.out.println("Enter room number: ");
+        System.out.print("Enter room number: ");
         roomNumber = sc.nextInt();
         sc.nextLine();
 
-        System.out.println("Enter number of pax for breakfast: ");
+        System.out.print("Enter number of pax for breakfast: ");
         numberOfPaxPerRoom = sc.nextInt();
         sc.nextLine(); // Consume newline left-over
 
-        totalPricePerRoom = numberOfPaxPerRoom * BREAKFAST_PRICE;
-        System.out.println("==================================================");
-        System.out.println("Total breakfast price for room " + roomNumber + " is: " + totalPricePerRoom);
-        totalOverallPax += numberOfPaxPerRoom;
-        totalOverallPrice += totalPricePerRoom;
-        bookingDateTime = LocalDateTime.now();
+        //set date
+        bookingDate = LocalDate.now();
+
+        System.out.println("\n\n");
+        System.out.println("==================================================================");
+        System.out.println("Room Number: "+roomNumber);
+        System.out.println("Booking Date: "+bookingDate);        
+        System.out.println("Breakfast Price for today - "+totalPricePerDay);
+        System.out.println("\nTotal Price: "+calculateBreakfastTotal());
+    }
+
+    public double calculateBreakfastTotal(){ //should include in payment
+        totalPricePerDay = numberOfPaxPerRoom * BREAKFAST_PRICE;
+        overallTotalPrice += totalPricePerDay;
+
+        return overallTotalPrice;
     }
 }   
+
+
