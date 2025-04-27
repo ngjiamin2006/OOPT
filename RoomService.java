@@ -56,19 +56,19 @@ public class RoomService {
             System.out.print("Enter customer room number: ");
             roomNumber = sc.nextInt();
             sc.nextLine(); // Consume newline left-over
-            System.out.println("\n");
-            System.out.print("Enter request type: ");
+            System.out.print("Enter request: ");
             requestType = sc.nextLine();
-            System.out.println("\n");
             requestTime = LocalDateTime.now();
-            System.out.print(requestTime + "\n");
+            System.out.print("File is saved, on "+requestTime + "\n");
         }
     }
 
     public void writeRequestToFile() {
         try (FileWriter writer = new FileWriter("RoomServiceRequests.txt", true)) { // Use try-with-resources for FileWriter
+            requestStatus="Pending";
+            writer.write("---------------------------------------------------------\n");
             writer.write("Room Number: " + roomNumber + "\n"
-                        + "Request Type: " + requestType + "\n"
+                        + "Request: " + requestType + "\n"
                         + "Request Time: " + requestTime + "\n"
                         + "Request Status: " + requestStatus + "\n"
                         + "---------------------------------------------------------\n");
@@ -79,7 +79,11 @@ public class RoomService {
     }
 
     public void displayRoomService() { //call this when run 
-        System.out.println("------------" + "|Room Service|" + "------------");
+        System.out.println("====================================");
+        System.out.println("|                                  |");
+        System.out.println("|          ROOM SERVICE            |");
+        System.out.println("|                                  |");
+        System.out.println("====================================");
         promptRequest(); // Updates instance variables
         writeRequestToFile(); // Uses updated instance variables
     }
