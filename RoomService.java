@@ -8,6 +8,7 @@ import java.util.Scanner;
 public class RoomService {
     private int roomNumber;
     private String requestType;
+    private int requestAmount;
     private LocalDateTime requestTime;
     private String requestStatus;
 
@@ -15,18 +16,17 @@ public class RoomService {
     public RoomService() {
         roomNumber = 0;
         requestType = "";
+        requestAmount=0;
         requestStatus = "";
-    }
-
-    public RoomService(int roomNumber, String requestType, String requestStatus) {
-        this.roomNumber = roomNumber;
-        this.requestType = requestType;
-        this.requestStatus = requestStatus;
     }
 
     // Getters
     public int getRoomNumber() {
         return roomNumber;
+    }
+
+    public int getRequestAmount(){
+        return requestAmount;
     }
 
     public String getRequestType() {
@@ -40,6 +40,10 @@ public class RoomService {
     // Setters
     public void setRoomNumber(int roomNumber) {
         this.roomNumber = roomNumber;
+    }
+    
+    public void setRequestAmount(int requestAmount){
+        this.requestAmount=requestAmount;
     }
 
     public void setRequestType(String requestType) {
@@ -58,6 +62,8 @@ public class RoomService {
             sc.nextLine(); // Consume newline left-over
             System.out.print("Enter request: ");
             requestType = sc.nextLine();
+            System.out.print("Enter reqest amount: ");
+            requestAmount = sc.nextInt();
             requestTime = LocalDateTime.now();
             System.out.print("File is saved, on "+requestTime + "\n");
         }
@@ -66,12 +72,8 @@ public class RoomService {
     public void writeRequestToFile() {
         try (FileWriter writer = new FileWriter("RoomServiceRequests.txt", true)) { // Use try-with-resources for FileWriter
             requestStatus="Pending";
-            writer.write("---------------------------------------------------------\n");
-            writer.write("Room Number: " + roomNumber + "\n"
-                        + "Request: " + requestType + "\n"
-                        + "Request Time: " + requestTime + "\n"
-                        + "Request Status: " + requestStatus + "\n"
-                        + "---------------------------------------------------------\n");
+            writer.write(roomNumber+"|"+requestType+"|"+requestAmount+"|"+requestTime+"|" +requestStatus);
+            writer.write("\n");
         } catch (IOException e) {
             System.out.println("An error occurred while writing to the file.");
             e.printStackTrace();
