@@ -28,6 +28,12 @@ public class Checkout {
         roomNumber=sc.nextInt();
         sc.nextLine();
 
+        System.out.println("Processing to Additional Payment...");
+        Charges charges = new Charges(roomNumber, bb);
+        charges.selectPaymentMethod();
+        System.out.println("Processing to Refund..."); 
+        Refund refund = new Refund(roomNumber,1); //1 是暂时的
+        refund.toString();
     }
 
     public String toString(){
