@@ -1,5 +1,9 @@
 package Assignment;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Charges extends Checkout {
@@ -11,12 +15,36 @@ public class Charges extends Checkout {
     private double balance;
     private double totalAmount;
 
-    public Charges(int roomNumber, BreakfastBooking bb){
-        super(roomNumber);
+    public Charges(String customerId, String roomNumber, double totalAmount){
+        super(customerId, roomNumber);
         this.totalAmount=bb.getOverallTotalPrice();
         cash=0;
         balance=0;
     }
+    
+    public void readFromFile(String customerId, String roomNumber, double overallTotalPrice) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("BreakfastBooking.txt"))) {
+            String lastLine = null;
+            String line;
+            while ((line = reader.readLine()) != null) {
+                lastLine = line; // Keep the last line (most recent booking)
+            }
+
+            if (lastLine != null) {
+                String[] parts = lastLine.split("\\|");
+                if (parts.length >= 3) {
+                    customerId = parts[0];
+                    roomNumber = parts[1];
+                    overallTotalPrice = Double.parseDouble(parts[2]);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("ERROR: No previous booking found.");
+        } catch (IOException e) {
+            System.out.println("An error occurred while reading the file.");
+            e.printStackTrace();
+        }
+    }  
 
     public void cashPayment(){
         System.out.println("TOTAL: RM"+totalAmount);
@@ -51,12 +79,9 @@ public class Charges extends Checkout {
     }
 
     public void selectPaymentMethod(){
+        readFromFile(super.getCustomerId(), super.getRoomNumber(), totalAmount);
         int promptMethod;
-        System.out.println("====================================");
-        System.out.println("|                                  |");
-        System.out.println("|            PAYMENT               |");
-        System.out.println("|                                  |");
-        System.out.println("====================================");
+        System.out.println(">>>>PAYMENT<<<<");
         System.out.println("\nTOTAL: RM"+totalAmount);
         System.out.println();
 
