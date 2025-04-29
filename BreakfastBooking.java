@@ -10,8 +10,9 @@ public class BreakfastBooking {
     public static final double BREAKFAST_PRICE = 35.0;
     private double overallTotalPrice;
     private double totalPricePerDay;
-    private int roomNumber;
+    private String roomNumber;
     private LocalDate bookingDate;
+    private String paymentStatus;
 
     //No arg constructor
     public BreakfastBooking(){
@@ -19,8 +20,9 @@ public class BreakfastBooking {
         numberOfPaxPerRoom = 0;
         overallTotalPrice = 0.0;
         totalPricePerDay = 0.0;
-        roomNumber = 0;
+        roomNumber = "";
         bookingDate = null;
+        paymentStatus="PENDING";
     }
 
     //Getter
@@ -36,11 +38,15 @@ public class BreakfastBooking {
     public double getOverallTotalPrice(){
         return overallTotalPrice;
     }
-    public int getRoomNumber(){
+    public String getRoomNumber(){
         return roomNumber;
     }
     public LocalDate getBookingDate(){
         return bookingDate;
+    }
+
+    public String getPaymentStatus(){
+        return paymentStatus;
     }
 
     //Setter
@@ -56,24 +62,30 @@ public class BreakfastBooking {
     public void setOverallTotalPrice(double overallTotalPrice){
         this.overallTotalPrice = overallTotalPrice;
     }
-    public void setRoomNumber(int roomNumber){
+    public void setRoomNumber(String roomNumber){
         this.roomNumber = roomNumber;
     }
 
-    public void readFromFile() {
+    public void setPaymentStatus(String paymentStatus){
+        this.paymentStatus=paymentStatus;
+    }
+
+    public void readFromFile(String targetCustomerId, String targetRoomNumber) {
         try (BufferedReader reader = new BufferedReader(new FileReader("BreakfastBooking.txt"))) {
-            String lastLine = null;
             String line;
             while ((line = reader.readLine()) != null) {
-                lastLine = line; // Keep the last line (most recent booking)
-            }
+                String[] parts = line.split("\\|");
+                if (parts.length >= 4) {
+                    String fileCustomerId = parts[0];
+                    String fileRoomNumber = parts[1];
 
-            if (lastLine != null) {
-                String[] parts = lastLine.split("\\|");
-                if (parts.length >= 3) {
-                    customerId = parts[0];
-                    roomNumber = Integer.parseInt(parts[1]);
-                    overallTotalPrice = Double.parseDouble(parts[2]);
+                    if (fileCustomerId.equals(targetCustomerId) && fileRoomNumber.equals(targetRoomNumber)) {
+                        customerId = fileCustomerId;
+                        roomNumber = fileRoomNumber;
+                        overallTotalPrice = Double.parseDouble(parts[2]);
+                        paymentStatus = parts[3];
+                        break; // Found match, stop
+                    }
                 }
             }
         } catch (FileNotFoundException e) {
@@ -83,24 +95,32 @@ public class BreakfastBooking {
             e.printStackTrace();
         }
     }
-
-
+    
     public void writeIntoFile() {
         List<String> lines = new ArrayList<>();
+        boolean updated = false;
     
         try (BufferedReader reader = new BufferedReader(new FileReader("BreakfastBooking.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split("\\|");
-                if (parts.length >= 3 && parts[0].equals(customerId)) {
-                    // If match customerId, update the line
-                    line = customerId + "|" + roomNumber + "|" + overallTotalPrice;
+    
+                if (parts.length >= 4 && parts[0].equals(customerId) && parts[1].equals(roomNumber)) {
+                    // Found the line to update
+                    line = customerId + "|" + roomNumber + "|" + overallTotalPrice + "|" + paymentStatus;
+                    updated = true;
                 }
-                lines.add(line); // Add (updated or original) line to list
+    
+                lines.add(line); // Add either the original or updated line
             }
         } catch (IOException e) {
             System.out.println("An error occurred while reading the file.");
             e.printStackTrace();
+        }
+    
+        if (!updated) {
+            // If not found in existing file, append new line
+            lines.add(customerId + "|" + roomNumber + "|" + overallTotalPrice + "|" + paymentStatus);
         }
     
         // Write all lines back to the file
@@ -114,43 +134,43 @@ public class BreakfastBooking {
             e.printStackTrace();
         }
     }
-    
 
     public void promptBooking(){
         System.out.println("\033c");
-
-        readFromFile();
         
         System.out.println("====================================");
-        System.out.println("|                                  |");
         System.out.println("|        BREAKFAST BOOKING         |");
-        System.out.println("|                                  |");
         System.out.println("====================================");
-
         Scanner sc = new Scanner(System.in);
         System.out.print("Enter customer ID: ");
         customerId=sc.nextLine();     
 
-        System.out.print("Enter room number: ");
-        roomNumber = sc.nextInt();
-        sc.nextLine();
+        if(customerId.contains("CUST")){
+            System.out.print("Enter Room Number: ");
+            roomNumber = sc.nextLine();
+            
+            readFromFile(customerId, roomNumber);
 
-        System.out.print("Enter number of pax for breakfast: ");
-        numberOfPaxPerRoom = sc.nextInt();
-        sc.nextLine(); // Consume newline left-over
+            System.out.print("Enter number of pax for breakfast: ");
+            numberOfPaxPerRoom = sc.nextInt();
+            sc.nextLine(); // Consume newline left-over
 
-        //set date
-        bookingDate = LocalDate.now();
+            //set date
+            bookingDate = LocalDate.now();
 
-        System.out.println("\n\n");
-        System.out.println("==================================================================");
-        System.out.println("Customer ID: "+customerId);
-        System.out.println("Room Number: "+roomNumber);
-        System.out.println("Booking Date: "+bookingDate);        
-        System.out.println("Breakfast Price for today - "+calculatePricePerDay());
-        System.out.println("\nTotal Price: "+calculateBreakfastTotal());
+            System.out.println("\n\n");
+            System.out.println("==================================================================");
+            System.out.println("Customer ID: "+customerId);
+            System.out.println("Room Number: "+roomNumber);
+            System.out.println("Booking Date: "+bookingDate);        
+            System.out.println("Breakfast Price for today - "+calculatePricePerDay());
+            System.out.println("\nTotal Price: "+calculateBreakfastTotal());
 
-        writeIntoFile();
+            writeIntoFile();
+        }
+        else{
+            System.out.println("ERROR: Invalid Customer ID, must contain CUST.");
+        }
     }
 
     public double calculatePricePerDay(){
